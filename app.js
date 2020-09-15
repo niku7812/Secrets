@@ -101,11 +101,15 @@ app.get("/register",function(req,res){
 
 
 app.get("/secrets",function(req,res){
-  if(req.isAuthenticated()){
-    res.render("secrets");
+  User.find({"secret": {$ne:null}},function(err,foundUsers){
+  if(err){
+    console.log(err);
   }else{
-    res.redirect("/login");
+    if(foundUsers){
+      res.render("secrets",{usersWithSecrets:foundUsers});
+    }
   }
+});
 });
 
 
@@ -119,7 +123,7 @@ app.get("/submit", function(req,res){
 
 app.post("/submit",function(req,res){
   const submittedSecret =req.body.secret;
-console.log(req.user.id);
+
 User.findById(req.user.id, function(err,foundUser){
   if(err){
     console.log(err)
